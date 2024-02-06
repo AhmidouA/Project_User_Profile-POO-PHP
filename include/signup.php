@@ -1,10 +1,10 @@
 <?php 
 require 'header.html'; 
 
-// import les class de maniere automatique
+/* class */
 require 'includeClasses.php';
 
-// Db 
+/* DB */ 
 require_once '../data/db.php';
 
 $manager = new Manager($bddPDO);
@@ -79,15 +79,6 @@ if(isset($_POST['lastName'])){
     </div>
 </body>
 
-
-
-
-
-
-
-
 <?php
-
-
 
 ?>

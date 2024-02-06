@@ -3,15 +3,17 @@ require 'header.html';
 
 require 'includeClasses.php';
 
-// Db 
+/* DB */
 require_once '../data/db.php';
 
 $manager = new Manager($bddPDO);
 
+/* UPDATE */
 if(isset($_GET['update'])) {
     $user = $manager->getUser((int) $_GET['update']);
 }
 
+/* UPDATE AND INSERT */
 if(isset($_POST['lastName'])) {
     $user = new Users([
         'lastName'=>$_POST['lastName'],
@@ -30,8 +32,20 @@ if($user->isUserValide()) {
 } else {
     $errors = $user->getErrors();
 }
-    
 }
+
+
+
+
+/* DELETE */
+if(isset($_GET['delete'])){
+    $manager->deleteUser((int) $_GET['delete']);
+    $message = 'User Deleted';
+} else {
+    $errors = $user->getErrors();
+}
+    
+
 
 ?>
 <head><title>Admin</title></head>
@@ -126,17 +140,19 @@ if($user->isUserValide()) {
             <th>&nbsp;Email &nbsp;</th> 
             <th>&nbsp;Phone Number&nbsp;</th> 
             <th>&nbsp;Update&nbsp;</th> 
+            <th>&nbsp;Delete &nbsp;</th>
         </tr>
 
         <?php
         foreach ($manager->getUsers() as $user) {
-            echo 
-                '<tr><td>', $user->getLastName(), 
-                '</td><td>', $user->getFirstName(), 
-                '</td><td>', $user->getEmail(), 
-                '</td><td>', $user->getPhone(), 
-                '</td><td><a href="?update=',$user->getId(),'">Update</a>'; 
-                '</td></tr>';
+            echo '<tr>
+                <td>', $user->getLastName(),'</td>
+                <td>', $user->getFirstName(),'</td>
+                <td>', $user->getEmail(),'</td>
+                <td>', $user->getPhone(), '</td>
+                <td><a href="?update=', $user->getId(), '">&nbsp Update &nbsp</a></td>
+                <td><a href="?delete=', $user->getId(), '">&nbsp Delete &nbsp</a></td>
+            </tr>';
         }
         ?>
     </table>
