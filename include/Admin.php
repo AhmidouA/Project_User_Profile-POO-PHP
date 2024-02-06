@@ -1,30 +1,144 @@
-<?php
+<?php 
+require 'header.html'; 
 
-class Admin {
+require 'includeClasses.php';
 
-    private $bddPDO;
+// Db 
+require_once '../data/db.php';
 
-    /* CONSTUCT */
-    function __construct(PDO $db){ // paramètre un objet PDO
-        $this->bddPDO = $db; // Constructeur qui nous permet de nous connecter ala db
-    }
+$manager = new Manager($bddPDO);
 
-
-
-    /* METHODE */
-    function insert(Users $user) {
-        $request = $this->bddPDO->prepare('INSERT INTO users(lastName, firstName, email, phone) 
-            value (:lastName, :firstName, :email, :phone)');
-
-        $request->bindValue(':lastName', $user->getLastName());
-        $request->bindValue(':firstName', $user->getFirstName());
-        $request->bindValue(':email', $user->getEmail());
-        $request->bindValue(':phone', $user->getPhone());
-
-        $request->execute();
-
-    }
+if(isset($_GET['update'])) {
+    $user = $manager->getUser((int) $_GET['update']);
 }
 
+if(isset($_POST['lastName'])) {
+    $user = new Users([
+        'lastName'=>$_POST['lastName'],
+        'firstName'=>$_POST['firstName'],
+        'phone'=>$_POST['phone'],
+        'email'=>$_POST['email'],
+    ]);
+
+if(isset($_POST['id'])){
+    $user->setId($_POST['id']);
+}
+
+if($user->isUserValide()) {
+    $manager->updateUser($user);
+    $message = 'User Updated';
+} else {
+    $errors = $user->getErrors();
+}
+    
+}
 
 ?>
+<head><title>Admin</title></head>
+<body>
+<style type="text/css">
+      table, td {
+        color: white;
+        border: 1px solid black;
+      }
+      
+      table {
+        margin:auto;
+        text-align: center;
+        border-collapse: collapse;
+      }
+      
+      td {
+        padding: 3px;
+      }
+    </style>
+    <p><a href="../index.php" style="color: white;">Home Page</a></p>
+    <body >
+
+<div id="admin" class="pb-5">
+        <div class="container">
+            <div id="admin-row" class="row justify-content-center align-items-center">
+                <div id="admin-column" class="col-md-6">
+                    <div id="admin-box" class="col-md-12">
+                        <form id="admin-form" class="form" action="admin.php" method="POST">
+                            <?php 
+                                if(isset($message)) echo $message
+                            ?>
+                            <h3 class="text-center text-info">Update User</h3>
+
+                            <?php
+                                if(isset($errors) && in_array(Users::LASTNAME_INVALID, $errors)) echo "Last Name invalid <br>";
+                            ?>
+                            <div class="form-group">
+                                <label for="lastName" class="text-info">lastName:</label><br>
+                                <input type="text" name="lastName" id="lastName" class="form-control"
+                                value="<?php if(isset($user)) echo $user->getLastName();?>">
+                            </div>
+
+                            <?php
+                                if(isset($errors) && in_array(Users::FIRSTNAME_INVALID, $errors)) echo "Frist Name invalid <br>";
+                            ?>
+                            <div class="form-group">
+                                <label for="firstName" class="text-info">firstName:</label><br>
+                                <input type="text" name="firstName" id="firstName" class="form-control"
+                                value="<?php if(isset($user)) echo $user->getFirstName();?>">
+                            </div>
+
+                            <?php
+                                if(isset($errors) && in_array(Users::PHONE_INVALID, $errors)) echo "Phone number invalid <br>";
+                            ?>          
+                            <div class="form-group">
+                                <label for="phone" class="text-info">Phone number:</label><br>
+                                <input type="text" name="phone" id="phone" class="form-control"
+                                value="<?php if(isset($user)) echo $user->getPhone();?>">
+                            </div>
+
+                            <?php
+                                if(isset($errors) && in_array(Users::EMAIL_INVALID, $errors)) echo "Email invalid <br>";
+                            ?> 
+                            <div class="form-group">
+                                <label for="username" class="text-info">Email:</label><br>
+                                <input type="email" name="email" id="email" class="form-control"
+                                value="<?php if(isset($user)) echo $user->getEmail();?>">
+                            </div>
+                            <div class="form-group">
+                                <?php
+                                if(isset($user)) {
+                                    ?>
+                                    <input type="hidden" name="id" value="<?=$user->getId() ?>" />
+                                    <input type="submit" value="Udpate "name="update" class="btn btn-info btn-md">
+                                    <?php
+                                    }
+                                    ?>                                
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pb-5">
+    <table >
+        <tr>
+            <th>&nbsp; LastName &nbsp;</th> 
+            <th>&nbsp;FirstName &nbsp;</th> 
+            <th>&nbsp;Email &nbsp;</th> 
+            <th>&nbsp;Phone Number&nbsp;</th> 
+            <th>&nbsp;Update&nbsp;</th> 
+        </tr>
+
+        <?php
+        foreach ($manager->getUsers() as $user) {
+            echo 
+                '<tr><td>', $user->getLastName(), 
+                '</td><td>', $user->getFirstName(), 
+                '</td><td>', $user->getEmail(), 
+                '</td><td>', $user->getPhone(), 
+                '</td><td><a href="?update=',$user->getId(),'">Update</a>'; 
+                '</td></tr>';
+        }
+        ?>
+    </table>
+    </div>
+</body>

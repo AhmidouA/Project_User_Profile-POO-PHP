@@ -1,12 +1,13 @@
 <?php 
 require 'header.html'; 
-require 'Users.php';
-require 'Admin.php';
+
+// import les class de maniere automatique
+require 'includeClasses.php';
 
 // Db 
 require_once '../data/db.php';
 
-$admin = new Admin($bddPDO);
+$manager = new Manager($bddPDO);
 
 
 if(isset($_POST['lastName'])){
@@ -19,17 +20,13 @@ if(isset($_POST['lastName'])){
     
     if($user->isUserValide()){
         // insert user
-        $admin->insert($user);
+        $manager->insert($user);
         echo 'User Save';
+    } else {
+        $errors = $user->getErrors();
     }
 }
-
-
-
 ?>
-
-
-
 
 <body >
 <div id="signup">
@@ -37,20 +34,36 @@ if(isset($_POST['lastName'])){
             <div id="signup-row" class="row justify-content-center align-items-center">
                 <div id="signup-column" class="col-md-6">
                     <div id="signup-box" class="col-md-12">
-                        <form id="signup-form" class="form" action="" method="POST">
+                        <form id="signup-form" class="form" action="signup.php" method="POST">
                             <h3 class="text-center text-info">Signup</h3>
+
+                            <?php
+                                if(isset($errors) && in_array(Users::LASTNAME_INVALID, $errors)) echo "Last Name invalid <br>";
+                            ?>
                             <div class="form-group">
                                 <label for="lastName" class="text-info">lastName:</label><br>
                                 <input type="text" name="lastName" id="lastName" class="form-control">
                             </div>
+
+                            <?php
+                                if(isset($errors) && in_array(Users::FIRSTNAME_INVALID, $errors)) echo "Frist Name invalid <br>";
+                            ?>
                             <div class="form-group">
                                 <label for="firstName" class="text-info">firstName:</label><br>
                                 <input type="text" name="firstName" id="firstName" class="form-control">
-                            </div>            
+                            </div>
+
+                            <?php
+                                if(isset($errors) && in_array(Users::PHONE_INVALID, $errors)) echo "Phone number invalid <br>";
+                            ?>          
                             <div class="form-group">
                                 <label for="phone" class="text-info">Phone number:</label><br>
-                                <input type="number" name="phone" id="phone" class="form-control">
+                                <input type="text" name="phone" id="phone" class="form-control">
                             </div>
+
+                            <?php
+                                if(isset($errors) && in_array(Users::EMAIL_INVALID, $errors)) echo "Email invalid <br>";
+                            ?> 
                             <div class="form-group">
                                 <label for="username" class="text-info">Email:</label><br>
                                 <input type="email" name="email" id="email" class="form-control">

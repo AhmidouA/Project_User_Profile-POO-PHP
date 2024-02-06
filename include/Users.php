@@ -6,12 +6,15 @@ class Users {
    private $lastName; 
    private $firstName; 
    private $email; 
-   private $phone; 
+   private $phone;
+   private $created_at;
+   private $updated_at;
 
    /* GESTION ERRROS */
    const LASTNAME_INVALID = 1;  // Code d'erreur pour un LASTNAME_INVALID
    const FIRSTNAME_INVALID = 2;  // Code d'erreur pour un  FIRSTNAME_INVALID
    const EMAIL_INVALID = 3;  // Code d'erreur pour une adresse EMAIL_INVALID
+   const PHONE_INVALID = 4;  // Code d'erreur pour un PHONE_INVALID
 
    /* CONSTUCT */
    function __construct($data = []){
@@ -24,27 +27,34 @@ class Users {
 
    /* GETTERS */
    function getId(){
-    return $this->id;
-    
+    return $this->id;    
    }
+
    function getLastName(){
     return $this->lastName;
    }
+
    function getFirstName(){
     return $this->firstName;
-
    }
+
    function getEmail(){
     return $this->email;
-
    }
+
    function getPhone(){
     return $this->phone;
-
    }
+   function getCreated_at(){
+    return $this->created_at;
+   }
+
+   function getUpdated_at(){
+    return $this->updated_at;
+   }
+
    function getErrors(){
     return $this->errors;
-
    }
 
    /* SETTERS */
@@ -56,7 +66,8 @@ class Users {
 
    function setLastName($userLastname){
         if (!is_string($userLastname) || empty($userLastname) ) {
-            $this->errors[] = self::FIRSTNAME_INVALID;
+            $this->errors[] = self::LASTNAME_INVALID;
+            
 
         } else {
             $this->lastName = $userLastname;
@@ -65,7 +76,7 @@ class Users {
 
    function setFirstName($userFirstName){
         if (!is_string($userFirstName) || empty($userFirstName) ) {
-            $this->errors[] = self::LASTNAME_INVALID;
+            $this->errors[] = self::FIRSTNAME_INVALID;
 
         } else {
             $this->firstName = $userFirstName;
@@ -81,8 +92,12 @@ class Users {
    }
 
    function setPhone($userPhone){
+    if(preg_match("/^[0-9]{10}$/", $userPhone)) {
         $this->phone = $userPhone;
-   }
+    } else {
+        $this->errors[] = self::PHONE_INVALID;
+    }
+}
 
 
 

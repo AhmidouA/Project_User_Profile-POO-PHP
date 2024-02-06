@@ -45,11 +45,19 @@ body {
 #signup .container #signup-row #signup-column #signup-box #signup-form #register-link {
     margin-top: -5.3125rem;
 }
-
-.text-right {
-    padding-top: 1rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: end;
+#admin .container #admin-row #admin-column #admin-box {
+    margin-top: 3.5rem;
+    max-width: 37.5rem;
+    height: auto;
+    border: 0.0625rem solid #9C9C9C;
+    background-color: #EAEAEA;
 }
+
+#admin .container #admin-row #admin-column #admin-box #admin-form {
+    padding: 1.25rem;
+}
+
+#admin .container #admin-row #admin-column #admin-box #admin-form #register-link {
+    margin-top: -5.3125rem;
+}
+
