@@ -16,6 +16,13 @@ class Admin {
         $request = $this->bddPDO->prepare('INSERT INTO users(lastName, firstName, email, phone) 
             value (:lastName, :firstName, :email, :phone)');
 
+        $request->bindValue(':lastName', $user->getLastName());
+        $request->bindValue(':firstName', $user->getFirstName());
+        $request->bindValue(':email', $user->getEmail());
+        $request->bindValue(':phone', $user->getPhone());
+
+        $request->execute();
+
     }
 }
 
